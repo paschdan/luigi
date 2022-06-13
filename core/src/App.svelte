@@ -7,6 +7,7 @@
   import SplitView from './SplitView.svelte';
   import LeftNav from './navigation/LeftNav.svelte';
   import TopNav from './navigation/TopNav.svelte';
+  import TopNavContainer from './navigation/TopNavContainer.svelte';
   import TabNav from './navigation/TabNav.svelte';
   import GlobalNav from './navigation/GlobalNav.svelte';
   import Breadcrumb from './navigation/Breadcrumb.svelte';
@@ -272,6 +273,7 @@
         return {
           unsavedChanges,
           hideNav,
+          topnavContainer,
           viewUrl,
           nodeParams,
           viewGroup,
@@ -298,6 +300,7 @@
       set: (obj) => {
         if (obj) {
           noAnimation = false;
+          topnavContainer = LuigiConfig.getConfigBooleanValue('settings.useTopNavContainer');
           Object.getOwnPropertyNames(obj).forEach((prop) => {
             if (prop === 'hideNav') {
               hideNav = obj.hideNav;
@@ -704,6 +707,7 @@
   /// RESIZING
 
   let hideNav;
+  let topnavContainer;
   let hideSideNav;
   let noAnimation;
   let previousWindowWidth;
@@ -1786,6 +1790,25 @@
       </div>
     </div>
   {/if}
+
+  {#if topnavContainer}
+  <TopNavContainer
+    pathData={navigationPath}
+    {pathParams}
+    on:handleClick={handleNavClick}
+    on:resizeTabNav={onResizeTabNav}
+    on:toggleSearch={toggleSearch}
+    on:closeSearchResult={closeSearchResult}
+    on:handleSearchNavigation={handleSearchNavigation}
+    bind:isSearchFieldVisible
+    bind:displaySearchResult
+    bind:displayCustomSearchResult
+    bind:searchResult
+    bind:inputElem
+    bind:luigiCustomSearchRenderer__slot
+    {burgerTooltip}
+  />
+  {:else}
   <TopNav
     pathData={navigationPath}
     {pathParams}
@@ -1802,6 +1825,7 @@
     bind:luigiCustomSearchRenderer__slot
     {burgerTooltip}
   />
+  {/if}
   {#if !hideNav}
     <GlobalNav
       pathData={navigationPath}
